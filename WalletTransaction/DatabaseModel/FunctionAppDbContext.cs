@@ -23,14 +23,14 @@ public partial class FunctionAppDbContext : DbContext
     }
 
     public virtual DbSet<Wallet> Wallets { get; set; }
-
     public virtual DbSet<WalletTransactionRecord> WalletTransactionRecords { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Wallet>(entity =>
         {
-            entity.HasKey(e => e.AccountId).HasName("PK__Wallet__349DA5861843ED44");
+            entity.HasKey(e => e.AccountId)
+                .HasName("PK__Wallet__349DA5861843ED44");
 
             entity.ToTable("Wallet");
 
@@ -39,12 +39,13 @@ public partial class FunctionAppDbContext : DbContext
             entity.Property(e => e.AccountId)
                 .HasMaxLength(50)
                 .HasColumnName("AccountID");
-            entity.Property(e => e.AccountBalance)
-            .IsRequired()
-            .HasColumnType("decimal(9, 2)");
+
+            entity.Property(e => e.AccountBalance).HasColumnType("decimal(9, 2)");
+
             entity.Property(e => e.AccountHolderName)
                 .IsRequired()
                 .HasMaxLength(255);
+
             entity.Property(e => e.CurrencyCode)
                 .IsRequired()
                 .HasMaxLength(20);
@@ -52,20 +53,27 @@ public partial class FunctionAppDbContext : DbContext
 
         modelBuilder.Entity<WalletTransactionRecord>(entity =>
         {
-            entity.HasKey(e => e.TransactionId).HasName("PK__WalletTr__55433A4B81F6E8C3");
+            entity.HasKey(e => e.TransactionId)
+                .HasName("PK__WalletTr__55433A4B81F6E8C3");
+
+            entity.ToTable("WalletTransactionRecord");
 
             entity.Property(e => e.TransactionId)
-                .HasDefaultValueSql("(newid())")
-                .HasColumnName("TransactionID");
+                .HasColumnName("TransactionID")
+                .HasDefaultValueSql("(newid())");
+
             entity.Property(e => e.AccountId)
                 .IsRequired()
                 .HasMaxLength(50)
                 .HasColumnName("AccountID");
+
             entity.Property(e => e.Direction)
                 .IsRequired()
                 .HasMaxLength(20);
-            entity.Property(e => e.TransactionTimestamp).HasColumnType("datetime");
+
             entity.Property(e => e.TransactionAmount).HasColumnType("decimal(9, 2)");
+
+            entity.Property(e => e.TransactionTimestamp).HasColumnType("datetime");
         });
 
         OnModelCreatingPartial(modelBuilder);
